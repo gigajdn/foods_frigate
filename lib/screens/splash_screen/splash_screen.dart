@@ -25,13 +25,13 @@ class _BodyState extends State<Body> {
   int currentPage = 0;
   final List<Map<String, String>> splashData = [
     {
-      "title": "Monitore suas comidas",
-      "text": "Saiba sempre o que há na sua geladeira",
+      "title": "Monitor your food",
+      "text": "Always know what's in your fridge",
     },
     {
-      "title": "Entenda o seu consumo",
+      "title": "Understand your consumption",
       "text":
-          "Você vai descobrir quais são os recursos\n mais usados por você.",
+          "You'll find out which resources you use the most.",
     },
   ];
 

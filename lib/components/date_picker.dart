@@ -34,13 +34,13 @@ class DatePicker extends StatelessWidget {
         children: <Widget>[
           Text(
             selectedDate == null
-                ? 'Nenhuma data selecionada!'
+                ? 'No date selected!'
                 : DateFormat('dd/MM/y').format(selectedDate),
           ),
           TextButton(
             // textColor: Theme.of(context).primaryColor,
             child: Text(
-              'Escolha uma data',
+              'Choose a date',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             onPressed: () => _showDatePicker(context),

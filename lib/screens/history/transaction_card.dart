@@ -123,7 +123,7 @@ class TransactionCard extends StatelessWidget {
                     ),
               SizedBox(width: 8),
               Text(
-                '$amount unidades',
+                '$amount units',
                 style: TextStyle(
                     color: isAdditive
                         ? Theme.of(context).colorScheme.primary.withOpacity(.8)

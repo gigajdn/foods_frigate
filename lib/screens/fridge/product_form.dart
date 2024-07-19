@@ -140,14 +140,14 @@ class _ProductFormState extends State<ProductForm> {
                         MaterialStateProperty.resolveWith(getColor),
                   ),
                   child: Text(
-                    'Cancelar',
+                    'Cancel',
                     style:
                         TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
                 ),
                 TextButton(
                   onPressed: _submitForm,
-                  child: Text('Confirmar'),
+                  child: Text('Submit'),
                 ),
               ],
               content: SingleChildScrollView(
@@ -158,7 +158,7 @@ class _ProductFormState extends State<ProductForm> {
                       ImagePreview(imgSrcController: _imgSrcController),
                       SizedBox(height: 16),
                       TextInput(
-                        label: "Nome do Item",
+                        label: "Item Name",
                         ctrl: _nameCtrl,
                         onSaved: (value) => _productFormData['name'] = value!,
                         onValidation: Validation.nameValidation,
@@ -167,7 +167,7 @@ class _ProductFormState extends State<ProductForm> {
                       ),
                       SizedBox(height: 16),
                       TextInput(
-                        label: "Quantidade (Und)",
+                        label: "Quantity",
                         ctrl: _amountCtrl,
                         onSaved: (value) =>
                             _productFormData['amount'] = int.parse(value!),
@@ -177,7 +177,7 @@ class _ProductFormState extends State<ProductForm> {
                       ),
                       SizedBox(height: 16),
                       TextInput(
-                        label: "Url da imagem",
+                        label: "Image url",
                         ctrl: _imgSrcController,
                         focusNode: _imgSrcFocusNode,
                         onSaved: (value) => _productFormData['imgSrc'] = value!,
@@ -193,17 +193,17 @@ class _ProductFormState extends State<ProductForm> {
                               showDialog(
                                 context: context,
                                 builder: (ctx) => AlertDialog(
-                                  title: Text('Excluir produto'),
+                                  title: Text('Delete product'),
                                   content: Text(
-                                      'Tem certeza que quer excluir este produto?'),
+                                      'Are you sure you want to delete this product?'),
                                   actions: [
                                     TextButton(
-                                      child: Text('Não'),
+                                      child: Text('No'),
                                       onPressed: () =>
                                           Navigator.of(context).pop(),
                                     ),
                                     TextButton(
-                                      child: Text('Sim'),
+                                      child: Text('Yes'),
                                       onPressed: () =>
                                           Navigator.of(context).pop(true),
                                     )
@@ -232,7 +232,7 @@ class _ProductFormState extends State<ProductForm> {
                                   Icon(Icons.delete, color: AppColors.RED_n230),
                                   SizedBox(width: 12),
                                   Text(
-                                    'Excluir produto',
+                                    'Delete product',
                                     style: TextStyle(
                                         fontSize: 18,
                                         color: AppColors.RED_n230),

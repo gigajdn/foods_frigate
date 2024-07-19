@@ -25,7 +25,7 @@ class SkipButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
-              'Pular',
+              'Start',
               style: TextStyle(
                   fontSize: 20, color: Theme.of(context).primaryColor),
             ),

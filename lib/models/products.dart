@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'product.dart';
 
 class Products with ChangeNotifier {
-  final String _baseApiUrl = 'https://flutter-fridge-default-rtdb.firebaseio.com';
+  final String _baseApiUrl = 'https://flutter-tekmob-default-rtdb.firebaseio.com';
   final String _colection = '/products';
 
   List<Product> _items = [];
@@ -50,11 +50,13 @@ class Products with ChangeNotifier {
 
     // update product
     if (alreadyExists >= 0) {
-      var error =  'Calma lá... já existe um produto cadastrado com esse nome ';
+      var error =  'Hold on... there`s already a product registered with that name';
       throw error;
     } else {
       // add product
-      final res = await http.post('$_baseApiUrl$_colection.json' as Uri, body: body);
+      final res = await http.post(Uri.parse('$_baseApiUrl$_colection.json'), body: body);
+
+      
 
       _items.add(Product(
         id: json.decode(res.body)['name'],
@@ -80,7 +82,9 @@ class Products with ChangeNotifier {
     });
 
     if (alreadyExists >= 0) {
-      await http.patch('$_baseApiUrl$_colection/$id.json' as Uri, body: body);
+      await http.patch(
+          Uri.parse('$_baseApiUrl$_colection/$id.json'),
+          body: body);
       _items[alreadyExists] = newProduct;
       notifyListeners();
     }
@@ -96,7 +100,9 @@ class Products with ChangeNotifier {
       _items.remove(product);
         notifyListeners();
 
-      final res = await http.delete('$_baseApiUrl$_colection/${product.id}.json' as Uri);
+      final res = await http
+          .delete(Uri.parse('$_baseApiUrl$_colection/${product.id}.json'));
+
 
       if(res.statusCode >= 400) {
         _items.insert(alreadyExists, product);

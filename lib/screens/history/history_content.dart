@@ -23,7 +23,7 @@ class _HistoryContentState extends State<HistoryContent> {
   FilterState _currentFilter = FilterState.withoutFilter;
   int _currentTitle = 0;
 
-  final List<String> _titles = ['', 'Apenas consumo', 'Apenas adições'];
+  final List<String> _titles = ['', 'Consumption only', 'Only additions'];
 
   void _setFilter(int index) {
     setState(() {
@@ -119,7 +119,7 @@ class _HistoryContentState extends State<HistoryContent> {
                   onPressed: () => _showTransactionDialog(
                     context,
                     SubmitType.update,
-                    'Editar transação',
+                    'Edit transaction',
                     transaction,
                     product,
                   ),
@@ -128,7 +128,7 @@ class _HistoryContentState extends State<HistoryContent> {
             ),
           ),
           ActionBar(
-            text: 'Nova transação',
+            text: 'New transaction',
             onPressed: () {}, // Add functionality here
             onPressedMinus: _filterByUsedTransactions,
             onPressedPlus: _filterByAdditiveTransactions,

@@ -1,3 +1,5 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:foods_frigate/models/theme.dart';
 import 'package:foods_frigate/themes.dart';
@@ -8,7 +10,20 @@ import 'models/transactions.dart';
 import 'screens/home_sreen.dart';
 import 'screens/splash_screen/splash_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: const FirebaseOptions(
+            apiKey: "AIzaSyAHWLhLLloEQBEtGRc1YRCLuTgMMFWWLFs",
+            authDomain: "flutter-tekmob.firebaseapp.com",
+            projectId: "flutter-tekmob",
+            storageBucket: "flutter-tekmob.appspot.com",
+            messagingSenderId: "446115919205",
+            appId: "1:446115919205:web:687845f3c477fc34735d8c"));
+  } else {
+    await Firebase.initializeApp();
+  }
   runApp(MyApp());
 }
 

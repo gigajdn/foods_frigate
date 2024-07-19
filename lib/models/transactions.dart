@@ -8,7 +8,7 @@ import 'transaction.dart';
 
 class Transactions with ChangeNotifier {
   final String _baseApiUrl =
-      'https://flutter-fridge-default-rtdb.firebaseio.com';
+      'https://flutter-tekmob-default-rtdb.firebaseio.com';
   final String _collection = '/transactions';
 
   final List<Transaction> _items = [];

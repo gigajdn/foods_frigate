@@ -20,7 +20,7 @@ class RankingCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return product == null
-        ? Text('Sem produtos por aqui')
+        ? Text('No products here')
         : Container(
             padding: EdgeInsets.symmetric(vertical: 12, horizontal: 18),
             margin: EdgeInsets.only(bottom: 12, left: 20, right: 20),
@@ -63,7 +63,7 @@ class RankingCard extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         Text(
-          '$amount consumidos',
+          '$amount consumed',
           style: TextStyle(color: AppColors.GRAY_n141.withOpacity(.8)),
         ),
       ],

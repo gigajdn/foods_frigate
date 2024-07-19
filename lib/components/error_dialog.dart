@@ -13,11 +13,11 @@ class ErrorDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Ocorreu um erro'),
+      title: Text('An error occurred'),
       content: Text(message),
       actions: [
         TextButton(
-          child: Text('Fechar'),
+          child: Text('Close'),
           onPressed: () => Navigator.of(context).pop(),
         )
       ],

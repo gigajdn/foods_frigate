@@ -158,14 +158,14 @@ class _TransactionFormState extends State<TransactionForm> {
                         MaterialStateProperty.resolveWith(getColor),
                   ),
                   child: Text(
-                    'Cancelar',
+                    'Cancel',
                     style:
                         TextStyle(color: Theme.of(context).colorScheme.error),
                   ),
                 ),
                 TextButton(
                   onPressed: _submitForm,
-                  child: Text('Confirmar'),
+                  child: Text('Submit'),
                 ),
               ],
               content: SingleChildScrollView(
@@ -174,7 +174,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   child: Column(
                     children: <Widget>[
                       TextInput(
-                        label: "Nome do Item",
+                        label: "Name A Item",
                         ctrl: _productNameCtrl,
                         onSaved: (value) =>
                             __transactionFormData['productName'] = value!,
@@ -183,7 +183,7 @@ class _TransactionFormState extends State<TransactionForm> {
                       ),
                       SizedBox(height: 16),
                       TextInput(
-                        label: "Quantidade",
+                        label: "Quantity",
                         ctrl: _amountCtrl,
                         onSaved: (value) =>
                             __transactionFormData['amount'] = int.parse(value!),
@@ -195,7 +195,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            _isAdditive ? 'Adição' : '',
+                            _isAdditive ? 'Addition' : '',
                             style: TextStyle(color: AppColors.GRAY_n135),
                           ),
                           SizedBox(width: 18),
@@ -226,7 +226,7 @@ class _TransactionFormState extends State<TransactionForm> {
                           ),
                           SizedBox(width: 18),
                           Text(
-                            _isAdditive ? '' : 'Consumo',
+                            _isAdditive ? '' : 'Consumption',
                             style: TextStyle(color: AppColors.GRAY_n135),
                           ),
                         ],
@@ -246,17 +246,17 @@ class _TransactionFormState extends State<TransactionForm> {
                               showDialog(
                                 context: context,
                                 builder: (ctx) => AlertDialog(
-                                  title: Text('Excluir produto'),
+                                  title: Text('Delete product'),
                                   content: Text(
-                                      'Tem certeza que quer excluir esta transação?'),
+                                      'Are you sure you want to delete this transaction?'),
                                   actions: [
                                     TextButton(
-                                      child: Text('Não'),
+                                      child: Text('No'),
                                       onPressed: () =>
                                           Navigator.of(context).pop(),
                                     ),
                                     TextButton(
-                                      child: Text('Sim'),
+                                      child: Text('Yes'),
                                       onPressed: () =>
                                           Navigator.of(context).pop(true),
                                     )
@@ -285,7 +285,7 @@ class _TransactionFormState extends State<TransactionForm> {
                                   Icon(Icons.delete, color: AppColors.RED_n230),
                                   SizedBox(width: 12),
                                   Text(
-                                    'Excluir transação',
+                                    'Delete transaction',
                                     style: TextStyle(
                                         fontSize: 18,
                                         color: AppColors.RED_n230),

@@ -31,7 +31,7 @@ class TopFiveContent extends StatelessWidget {
           Positioned(
             top: size.height * .05,
             child: Text(
-              '- Mais consumidos - ',
+              '- Most consumed -',
               style: TextStyle(fontSize: 30),
             ),
           )
