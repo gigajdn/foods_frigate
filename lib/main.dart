@@ -1,125 +1,248 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'components/addFood.dart';
+import 'components/editFood.dart';
+import 'components/header.dart';
+import 'components/itemFood.dart';
+import 'components/modalButton.dart';
+import 'components/navbar.dart';
+import 'components/refrigerator.dart';
+import 'components/settingModal.dart';
+import 'components/shoppingList.dart';
+import 'components/user.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() => runApp(RememberFridgeApp());
+
+class RememberFridgeApp extends StatefulWidget {
+  @override
+  _RememberFridgeAppState createState() => _RememberFridgeAppState();
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _RememberFridgeAppState extends State<RememberFridgeApp> {
+  final blankItemState = {
+    "img": "",
+    "quantity": "",
+    "name": "",
+    "added": "",
+    "expires": "",
+    "category": "fridge"
+  };
 
-  // This widget is the root of your application.
+  Map<String, dynamic> state = {
+    "activeArea": "fridge",
+    "editorLaunchIn": "fridge",
+    "darkMode": false,
+    "editorIsOpen": false,
+    "settingsIsOpen": false,
+    "listIsOpen": false,
+    "currentItem": {},
+    "foodItems": [],
+    "shoppingList": [],
+    "editorMode": "add"
+  };
+
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
-    );
+  void initState() {
+    super.initState();
+    state["currentItem"] = blankItemState;
+    _loadLocalStorage();
   }
-}
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
-
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
+  _loadLocalStorage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      state["foodItems"] = jsonDecode(prefs.getString("myFridgeItems") ?? '[]');
+      state["darkMode"] = jsonDecode(prefs.getString("myFridgeDarkMode") ?? 'false');
+      state["shoppingList"] = jsonDecode(prefs.getString("myFridgeShoppingList") ?? '[]');
+    });
+  }
+
+  _setLocalStorage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("myFridgeItems", jsonEncode(state["foodItems"]));
+    prefs.setString("myFridgeDarkMode", jsonEncode(state["darkMode"]));
+    prefs.setString("myFridgeShoppingList", jsonEncode(state["shoppingList"]));
+  }
+
+  void _handleNavigation(String targetArea) {
+    setState(() {
+      state["activeArea"] = targetArea;
+      state["editorLaunchIn"] = targetArea;
+    });
+  }
+
+  void _openEditor(Map<String, dynamic> item) {
+    setState(() {
+      state["editorIsOpen"] = true;
+      state["editorLaunchIn"] = state["activeArea"];
+      state["currentItem"] = item.isNotEmpty ? item : blankItemState;
+      state["editorMode"] = item.isNotEmpty ? "edit" : "add";
+    });
+  }
+
+  void _closeEditor(String closingAs) {
+    setState(() {
+      state["editorIsOpen"] = false;
+      state["currentItem"] = blankItemState;
+      state["activeArea"] = closingAs;
+    });
+  }
+
+  void _addItem() {
+    setState(() {
+      state["foodItems"].add({
+        ...state["currentItem"],
+        "category": state["activeArea"],
+        "id": DateTime.now().toString()
+      });
+      state["editorIsOpen"] = false;
+      state["currentItem"] = blankItemState;
+      _setLocalStorage();
+    });
+  }
+
+  void _deleteItem(String itemId) {
+    setState(() {
+      state["foodItems"].removeWhere((item) => item["id"] == itemId);
+      _setLocalStorage();
+    });
+  }
+
+  void _updateShoppingList(List<Map<String, dynamic>> newList) {
+    setState(() {
+      state["shoppingList"] = newList;
+      _setLocalStorage();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // TRY THIS: Try changing the color here to a specific color (to
-        // Colors.amber, perhaps?) and trigger a hot reload to see the AppBar
-        // change color while the other colors stay the same.
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          //
-          // TRY THIS: Invoke "debug painting" (choose the "Toggle Debug Paint"
-          // action in the IDE, or press "p" in the console), to see the
-          // wireframe for each widget.
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
+    return MaterialApp(
+      theme: state["darkMode"] ? ThemeData.dark() : ThemeData.light(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text("Remember Fridge"),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () {
+                setState(() {
+                  state["settingsIsOpen"] = !state["settingsIsOpen"];
+                });
+              },
             ),
           ],
         ),
+        body: Stack(
+          children: [
+            _buildBody(),
+            if (state["settingsIsOpen"]) _buildSettingsModal(),
+            if (state["editorIsOpen"]) _buildEditor(),
+            if (state["listIsOpen"]) _buildShoppingList(),
+          ],
+        ),
+        bottomNavigationBar: _buildBottomNavBar(),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+
+  Widget _buildBody() {
+    return Refrigerator(
+      category: state["activeArea"],
+      openEditor: _openEditor,
+      foodItems: state["foodItems"],
+      deleteItem: _deleteItem,
+      currentSection: state["activeArea"],
+      sectionChange: _handleNavigation,
+      toggleSettings: () {
+        setState(() {
+          state["settingsIsOpen"] = !state["settingsIsOpen"];
+        });
+      },
+      toggleList: () {
+        setState(() {
+          state["listIsOpen"] = !state["listIsOpen"];
+        });
+      },
+    );
+  }
+
+  Widget _buildBottomNavBar() {
+    return navbar(
+      currentSection: state["activeArea"],
+      sectionChange: _handleNavigation,
+      toggleSettings: () {
+        setState(() {
+          state["settingsIsOpen"] = !state["settingsIsOpen"];
+        });
+      },
+      toggleList: () {
+        setState(() {
+          state["listIsOpen"] = !state["listIsOpen"];
+        });
+      },
+    );
+  }
+
+  Widget _buildSettingsModal() {
+    return SettingsModal(
+      isOpen: state["settingsIsOpen"],
+      closeModal: () {
+        setState(() {
+          state["settingsIsOpen"] = false;
+        });
+      },
+      darkMode: state["darkMode"],
+      changeColor: (bool? value) {
+        setState(() {
+          state["darkMode"] = value!;
+          _setLocalStorage();
+        });
+      },
+      loadSamples: () {
+        // Add your load sample data logic here
+      },
+      deleteAll: () {
+        setState(() {
+          state["foodItems"] = [];
+          state["shoppingList"] = [];
+          _setLocalStorage();
+        });
+      },
+    );
+  }
+
+  Widget _buildEditor() {
+    return EditFood(
+      isOpen: state["editorIsOpen"],
+      closeEditor: _closeEditor,
+      currentItem: state["currentItem"],
+      addItem: _addItem,
+      updateItem: (Map<String, dynamic> updatedItem) {
+        setState(() {
+          int index = state["foodItems"].indexWhere((item) => item["id"] == updatedItem["id"]);
+          if (index != -1) {
+            state["foodItems"][index] = updatedItem;
+            _setLocalStorage();
+          }
+        });
+      },
+      editorMode: state["editorMode"],
+    );
+  }
+
+  Widget _buildShoppingList() {
+    return ShoppingList(
+      isOpen: state["listIsOpen"],
+      isDark: state["darkMode"],
+      closeList: () {
+        setState(() {
+          state["listIsOpen"] = false;
+        });
+      },
+      shoppingList: state["shoppingList"],
+      updateShoppingList: _updateShoppingList,
     );
   }
 }
