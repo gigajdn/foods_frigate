@@ -38,6 +38,8 @@ dependencies:
   shared_preferences: ^2.2.3
   flutter_datetime_picker: ^1.5.1
   flutter_svg: ^2.0.10+1
+  provider: ^6.1.2
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -63,13 +65,8 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/close-black.svg
-    - assets/close-white.svg
-    - assets/yes.svg
-    - assets/no-white.svg
-    - assets/no-green.svg
-    - assets/trash.svg
-    - assets/add-icon.svg
+    - assets/images/ 
+    - assets/icons/
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
@@ -85,6 +82,13 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
+  fonts:
+    - family: DidactGothic
+      fonts:
+        - asset: assets/fonts/DidactGothic-Regular.ttf
+    - family: Imprima
+      fonts:
+        - asset: assets/fonts/Imprima-Regular.ttf  
   # fonts:
   #   - family: Schyler
   #     fonts:
