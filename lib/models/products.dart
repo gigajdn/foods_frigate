@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import 'dart:convert';
 import 'product.dart';
 
 class Products with ChangeNotifier {
   final String _baseApiUrl = 'https://flutter-tekmob-default-rtdb.firebaseio.com';
-  final String _colection = '/products';
+  final String _collection = '/products';
 
   List<Product> _items = [];
 
@@ -19,94 +18,99 @@ class Products with ChangeNotifier {
   }
 
   Future<List<Product>> loadProducts() async {
-    final res = await http.get('$_baseApiUrl$_colection.json' as Uri);
-    Map<String, dynamic> data = json.decode(res.body);
+    final Uri url = Uri.parse('$_baseApiUrl$_collection.json');
+    final res = await http.get(url);
 
-    _items.clear();
-    data.forEach((productId, productData) {
-      _items.add(Product(
-        id: productId,
-        name: productData['name'],
-        amount: productData['amount'],
-        imgSrc: productData['imgSrc'],
-        totalUsed: productData['totalUsed'],
-      ));
-    });
-    notifyListeners();
-  
-    return Future.value(_items);
+    if (res.statusCode == 200) {
+      final Map<String, dynamic> data = json.decode(res.body) as Map<String, dynamic>;
+
+      _items.clear();
+      data.forEach((productId, productData) {
+        _items.add(Product(
+          id: productId,
+          name: productData['name'],
+          amount: productData['amount'],
+          imgSrc: productData['imgSrc'],
+          totalUsed: productData['totalUsed'],
+        ));
+      });
+      notifyListeners();
+    } else {
+      throw Exception('Failed to load products');
+    }
+
+    return _items;
   }
 
   Future<void> saveProduct(Product newProduct) async {
-    final alreadyExists =
-        _items.indexWhere((prod) => prod.name == newProduct.name);
+    final alreadyExists = _items.indexWhere((prod) => prod.name == newProduct.name);
 
-    var body = json.encode({
-      'name': newProduct.name,
-      'amount': newProduct.amount,
-      'imgSrc': newProduct.imgSrc,
-      'totalUsed': newProduct.totalUsed,
-    });
-
-    // update product
     if (alreadyExists >= 0) {
-      var error =  'Hold on... there`s already a product registered with that name';
-      throw error;
+      throw Exception('Hold on... there`s already a product registered with that name');
     } else {
-      // add product
-      final res = await http.post(Uri.parse('$_baseApiUrl$_colection.json'), body: body);
+      final Uri url = Uri.parse('$_baseApiUrl$_collection.json');
+      final body = json.encode({
+        'name': newProduct.name,
+        'amount': newProduct.amount,
+        'imgSrc': newProduct.imgSrc,
+        'totalUsed': newProduct.totalUsed,
+      });
 
-      
+      final res = await http.post(url, body: body);
 
-      _items.add(Product(
-        id: json.decode(res.body)['name'],
-        name: newProduct.name,
-        amount: newProduct.amount,
-        imgSrc: newProduct.imgSrc,
-        totalUsed: newProduct.totalUsed,
-      ));
-      notifyListeners();
+      if (res.statusCode == 200) {
+        _items.add(Product(
+          id: json.decode(res.body)['name'],
+          name: newProduct.name,
+          amount: newProduct.amount,
+          imgSrc: newProduct.imgSrc,
+          totalUsed: newProduct.totalUsed,
+        ));
+        notifyListeners();
+      } else {
+        throw Exception('Failed to save product');
+      }
     }
-
-    return null;
   }
 
   Future<void> updateProduct(String id, Product newProduct) async {
-    var alreadyExists = _items.indexWhere((prod) => prod.id == id);
-
-    var body = json.encode({
-      'name': newProduct.name,
-      'amount': newProduct.amount,
-      'imgSrc': newProduct.imgSrc,
-      'totalUsed': newProduct.totalUsed,
-    });
+    final alreadyExists = _items.indexWhere((prod) => prod.id == id);
 
     if (alreadyExists >= 0) {
-      await http.patch(
-          Uri.parse('$_baseApiUrl$_colection/$id.json'),
-          body: body);
-      _items[alreadyExists] = newProduct;
-      notifyListeners();
-    }
+      final Uri url = Uri.parse('$_baseApiUrl$_collection/$id.json');
+      final body = json.encode({
+        'name': newProduct.name,
+        'amount': newProduct.amount,
+        'imgSrc': newProduct.imgSrc,
+        'totalUsed': newProduct.totalUsed,
+      });
 
-    return Future.value();
+      final res = await http.patch(url, body: body);
+
+      if (res.statusCode == 200) {
+        _items[alreadyExists] = newProduct;
+        notifyListeners();
+      } else {
+        throw Exception('Failed to update product');
+      }
+    }
   }
 
   Future<void> deleteProduct(String id) async {
     final alreadyExists = _items.indexWhere((prod) => prod.id == id);
 
-    if(alreadyExists >= 0) {
+    if (alreadyExists >= 0) {
       final product = _items[alreadyExists];
       _items.remove(product);
-        notifyListeners();
+      notifyListeners();
 
-      final res = await http
-          .delete(Uri.parse('$_baseApiUrl$_colection/${product.id}.json'));
+      final Uri url = Uri.parse('$_baseApiUrl$_collection/${product.id}.json');
+      final res = await http.delete(url);
 
-
-      if(res.statusCode >= 400) {
+      if (res.statusCode >= 400) {
         _items.insert(alreadyExists, product);
         notifyListeners();
+        throw Exception('Failed to delete product');
       }
     }
   }

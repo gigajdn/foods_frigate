@@ -1,4 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:foods_frigate/models/theme.dart';
@@ -23,6 +24,7 @@ void main() async {
             appId: "1:446115919205:web:687845f3c477fc34735d8c"));
   } else {
     await Firebase.initializeApp();
+    FirebaseDatabase.instance.setLoggingEnabled(true);
   }
   runApp(MyApp());
 }

@@ -155,7 +155,7 @@ class _TransactionFormState extends State<TransactionForm> {
                   onPressed: () => Navigator.of(context).pop(),
                   style: ButtonStyle(
                     foregroundColor:
-                        MaterialStateProperty.resolveWith(getColor),
+                        WidgetStateProperty.resolveWith(getColor),
                   ),
                   child: Text(
                     'Cancel',
